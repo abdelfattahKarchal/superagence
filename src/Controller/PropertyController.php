@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Property;
+use App\Entity\PropertySearch;
+use App\Form\PropertySearchType;
 use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -35,25 +37,19 @@ class PropertyController extends AbstractController {
      */
     public function index(PaginatorInterface $paginator, Request $request):Response
     {
-       /*  $property = new Property();
-        $property->setTitle("Mon bien")
-                ->setRooms(4)
-                ->setBedrooms(2)
-                ->setDescription("une petite description")
-                ->setSurface(60)
-                ->setPrice(200000)
-                ->setPostalCode(50060)
-                ->setFloor(2)
-                ->setCity("casablanca")
-                ->setAddress("25 rue lot iraki 2")
-                ->setHeat(1);
-        
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($property);
-                $em->flush(); */
 
-                //$repository = $this->getDoctrine()->getRepository(Property::class);
-                $query = $this->repository->findAllVisibleQuery();
+            /* pour creer un formulaire de recherche :
+                1- creer l entity
+                2- creer le formulaire
+                3- gerer le traitement dans le controller
+                */
+                $search = new PropertySearch();
+                $form = $this->createForm(PropertySearchType::class, $search);
+
+                $form->handleRequest($request);
+
+
+                $query = $this->repository->findAllVisibleQuery($search);
                 //$property[0]->setSold(true);
                 //$this->em->flush();
                 //dump($property);
@@ -65,7 +61,8 @@ class PropertyController extends AbstractController {
                 );       
         return $this->render('property/index.html.twig',[
             'current_menu' => 'properties',
-            'properties' => $properties
+            'properties' => $properties,
+            'form' => $form->createView()
         ]);
     }
 
