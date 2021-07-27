@@ -31,14 +31,23 @@ class PropertyRepository extends ServiceEntityRepository
        $query= $this->findVisibleQuery();
 
        if ($search->getMaxPrice()) {
-        $query = $query->andWhere('p.price <= :maxprice')
+            $query->andWhere('p.price <= :maxprice')
                 ->setParameter('maxprice', $search->getMaxPrice());
        }
 
        if ($search->getMinSurface()) {
-        $query = $query->andWhere('p.surface >= :minsurface')
+            $query->andWhere('p.surface >= :minsurface')
                 ->setParameter('minsurface', $search->getMinSurface());
        }
+
+       if ($search->getOptions()->count() > 0) {
+        $key =0;
+            foreach ($search->getOptions() as $option) {
+                $key++;
+                $query->andWhere(":option$key MEMBER OF p.options")
+                ->setParameter("option$key", $option);
+            }
+        }
        return $query->getQuery();
     }
 
@@ -48,7 +57,7 @@ class PropertyRepository extends ServiceEntityRepository
     public function findLatest(): array
     {
         return $this->findVisibleQuery()
-        ->andWhere('p.sold = false')
+        //->andWhere('p.sold = false')
         ->setMaxResults(4)
         ->getQuery()
         ->getResult();
