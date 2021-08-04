@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+
 class AdminPropertyController extends AbstractController{
 
     /**
@@ -68,6 +69,7 @@ class AdminPropertyController extends AbstractController{
         $form = $this->createForm(PropertyType::class, $property);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
             $this->em->flush();
             $this->addFlash('success', 'Bien modifié avec succès');
            return $this->redirectToRoute('admin.property.index');
