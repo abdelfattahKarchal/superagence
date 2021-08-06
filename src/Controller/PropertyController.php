@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Contact;
 use App\Entity\Property;
 use App\Entity\PropertySearch;
+use App\Form\ContactType;
 use App\Form\PropertySearchType;
+use App\Notification\ContactNotification;
 use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -70,7 +73,7 @@ class PropertyController extends AbstractController {
      * @Route("/biens/{slug}-{id}", name="property.show", requirements={"slug": "[a-z0-9\-]*"})
      * @return Response
      */
-    public function show(Property $property, $slug):Response
+    public function show(Property $property, $slug, Request $request, ContactNotification $notification):Response
     {
         if ($slug !== $property->getSlug()) {
            return $this->redirectToRoute('property.show',[
@@ -78,13 +81,30 @@ class PropertyController extends AbstractController {
                'slug' => $property->getSlug()
            ], 301);
         }
+
+        $contact = new Contact();
+        $contact->setProperty($property);
+        $form = $this->createForm(ContactType::class, $contact);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $notification->notify($contact);
+            $this->addFlash('success', " Votre email à bien été envoyé");
+
+           /*  return $this->redirectToRoute('property.show',[
+                'id'=> $property->getId(),
+                'slug' => $property->getSlug()
+            ]); */
+        }
+
         // quand on inject la class Property celui la permet de faire $this->repository->find($id) puisqu il trouve 
         // le id sur la route
         //$property = $this->repository->find($id);
         //dump($property);
         return $this->render('property/show.html.twig',[
             'current_menu' => 'properties',
-            'property' => $property
+            'property' => $property,
+            'form' => $form->createView()
         ]);
     }
 }
