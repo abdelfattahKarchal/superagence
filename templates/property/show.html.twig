@@ -33,10 +33,10 @@
 					<div class="text-primary" style="font-weight: bold; font-size: 4rem;">
 						{{ property.formattedPrice }}
 						€</div>
-					<a href="" class="btn btn-primary">Contacter l'agence</a>
-					<div id="contactForm" class="mt-4">
+					<a href="" class="btn btn-primary" id="contactButton"{% if form.vars.submitted %} style="display: none;" {% endif %}>Contacter l'agence</a>
+					<div id="contactForm" class="mt-4"{% if not form.vars.submitted %} style="display: none;" {% endif %}>
 						{{ form_start(form) }}
-						<div class="row">
+						<div class="form-row align-items-end">
 							<div class="col">
 								{{ form_row(form.firstname) }}
 							</div>
@@ -44,7 +44,7 @@
 								{{ form_row(form.lastname) }}
 							</div>
 						</div>
-						<div class="row">
+						<div class="form-row align-items-end">
 							<div class="col">
 								{{ form_row(form.phone) }}
 							</div>

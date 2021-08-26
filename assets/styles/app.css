@@ -1,0 +1,6 @@
+textarea { 
+    resize: none; 
+}
+.select2-search__field{
+    height: 1em;
+}
