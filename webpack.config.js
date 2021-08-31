@@ -95,6 +95,6 @@ Encore
 var config = Encore.getWebpackConfig();
 
 //module.exports.externals.jquery = 'jQuery';
- config.externals.jquery = 'jQuery';
+ //config.externals.jquery = 'jQuery';
 module.exports = config; 
 
