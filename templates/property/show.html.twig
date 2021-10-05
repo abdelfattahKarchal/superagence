@@ -17,12 +17,17 @@
 			{% endif %}
 			<div class="row">
 				<div class="col-md-8">
-					{% if property.filename %}
-						<img src="{{ vich_uploader_asset(property, property.imageFile) | imagine_filter('thumbe') }}" alt="card-img-top">
+					<div data-slider>
+						{% if property.pictures is empty %}
+							<img src="{{ 'images/properties/empty.jpeg' | imagine_filter('medium') }}" alt="card-img-top">
 
-					{% else %}
-						<img src="{{ 'images/properties/empty.jpeg' | imagine_filter('thumbe') }}" alt="card-img-top">
-					{% endif %}
+						{% else %}
+
+							{% for picture in property.pictures %}
+								<img src="{{ vich_uploader_asset(picture, 'imageFile') | imagine_filter('medium') }}" alt="card-img-top">
+							{% endfor %}
+						{% endif %}
+					</div>
 				</div>
 				<div class="col-md-4">
 					<h1>{{ property.title }}</h1>
@@ -33,8 +38,8 @@
 					<div class="text-primary" style="font-weight: bold; font-size: 4rem;">
 						{{ property.formattedPrice }}
 						€</div>
-					<a href="" class="btn btn-primary" id="contactButton"{% if form.vars.submitted %} style="display: none;" {% endif %}>Contacter l'agence</a>
-					<div id="contactForm" class="mt-4"{% if not form.vars.submitted %} style="display: none;" {% endif %}>
+					<a href="" class="btn btn-primary" id="contactButton" {% if form.vars.submitted %} style="display: none;" {% endif %}>Contacter l'agence</a>
+					<div id="contactForm" class="mt-4" {% if not form.vars.submitted %} style="display: none;" {% endif %}>
 						{{ form_start(form) }}
 						<div class="form-row align-items-end">
 							<div class="col">
@@ -118,6 +123,6 @@
 				</ul>
 			</div>
 		</div>
-
+		<div id="map" style="width:100%; height:400px;" data-lat={{ property.lat }} data-lng="{{ property.lng }}"></div>
 	</div>
 {% endblock %}
